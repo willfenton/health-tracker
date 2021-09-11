@@ -6,8 +6,34 @@ import datetime
 
 # Create your models here.
 class Events(models.Model):
-    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    userId = models.ForeignKey(User, on_delete=models.CASCADE)
     activity_date = models.DateTimeField("activity date")
     activity = models.CharField(max_length=200)
     points = models.IntegerField(default=0)
    
+class TrackerUser(User):
+    class Meta:
+        proxy = True
+
+    def get_badges(self):
+        point_total = self.get_points()
+        badges_cutoffs = {
+            "gold": 30,
+            "silver": 20,
+            "branze": 10
+        }
+        keys = badges_cutoffs.keys()
+        badges = []
+        for key in keys:
+            if point_total > badges_cutoffs.get(key):
+                badges.append(key)
+
+        return badges
+
+    def get_points(self):
+        user_events = Events.objects.filter(userId = self.id)
+        point_total = 0
+        for event in user_events:
+            point_total += event.points
+        
+        return point_total
