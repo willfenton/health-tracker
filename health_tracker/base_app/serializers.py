@@ -7,7 +7,7 @@ class TrackerUserSerializer(serializers.HyperlinkedModelSerializer):
         model = TrackerUser
         fields = ('id', 'username', 'password')
 
-class EventsSerializer(serializers.HyperlinkedModelSerializer):
+class EventsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Events
         fields = ('userId', 'activity_date', 'activity', 'points')
