@@ -1,0 +1,72 @@
+{% extends "nav.html" %}
+
+{% load static %}
+
+{#{% block title %}Custom title{% endblock %}#}
+
+{% block content %}
+    {% csrf_token %}
+
+    <div class="bg-light p-5 rounded">
+        <h1>{{ user.username }}</h1>
+        <h2>{{ user.email }}</h2>
+        <h3>Points: {{ points }}</h3>
+        <h3>Badges: {{ badges }}</h3>
+        <h3>Streak:</h3>
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                onclick="resetDateTimeSelects()">
+            Add activity
+        </button>
+
+        <h3>Events:</h3>
+        <ul>
+            {% for event in events %}
+                <li>Event: {{ event.activity }} at {{ event.activity_date }} for {{ event.points }} points</li>
+            {% endfor %}
+        </ul>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Record an activity</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="activity" class="form-label">Activity</label>
+                                <select class="form-select" id="activity" required>
+                                    <option>Exercise</option>
+                                    <option>Eat healthy</option>
+                                    <option>Meditate</option>
+                                    <option>Get enough sleep</option>
+                                    <option>Socialize</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="date" class="form-label">Date</label>
+                                <input type="date" id="date" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="time" class="form-label">Time</label>
+                                <input type="time" id="time" required>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="trackActivity()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script defer src="{% static 'profile.js' %}"></script>
+{% endblock %}
