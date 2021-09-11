@@ -1,6 +1,17 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from .forms import UserCreationForm
+from rest_framework import viewsets
+from .serializers import TrackerUserSerializer, EventsSerializer
+from .models import TrackerUser, Events
+
+class TrackerUserViewSet(viewsets.ModelViewSet):
+    queryset = TrackerUser.objects.all().order_by('id')
+    serializer_class = TrackerUserSerializer
+
+class EventViewSet(viewsets.ModelViewSet):
+    queryset = Events.objects.all().order_by('userId')
+    serializer_class = EventsSerializer
 
 
 def index(request):

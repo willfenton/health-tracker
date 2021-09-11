@@ -2,11 +2,15 @@ from django.db import models
 from django.db.models.fields import CharField
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.conf import settings
 import datetime
 
 # Create your models here.
 class Events(models.Model):
-    userId = models.ForeignKey(User, on_delete=models.CASCADE)
+    userId = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
     activity_date = models.DateTimeField("activity date")
     activity = models.CharField(max_length=200)
     points = models.IntegerField(default=0)
@@ -31,7 +35,7 @@ class TrackerUser(User):
         return badges
 
     def get_points(self):
-        user_events = Events.objects.filter(userId = self.id)
+        user_events = Events.objects.filter()
         point_total = 0
         for event in user_events:
             point_total += event.points
