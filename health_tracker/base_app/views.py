@@ -1,13 +1,17 @@
+from django.contrib import messages
+from django.contrib.auth import login
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from .forms import UserCreationForm
 from rest_framework import viewsets
-from .serializers import TrackerUserSerializer, EventsSerializer
+
 from .models import TrackerUser, Events
+from .serializers import TrackerUserSerializer, EventsSerializer
+from .forms import RegisterForm
+
 
 class TrackerUserViewSet(viewsets.ModelViewSet):
     queryset = TrackerUser.objects.all().order_by('id')
     serializer_class = TrackerUserSerializer
+
 
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Events.objects.all().order_by('userId')
@@ -18,37 +22,16 @@ def index(request):
     return render(request, 'index.html')
 
 
-def login(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-
-        # match credentials to user
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            auth_login(request, user)  # log user in
-            return redirect('profile')  # redirect to profile - get name/url of page to redirect to
-        else:
-            message.error(request, 'Username OR Password is incorrect')
-
-    return render(request, 'login.html')  # failure to log in
-
-
 def register(request):
-    if request.method == 'POST':
-        # create user
-        form = UserCreationForm(request.POST)
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
+            login(request, user)
+            messages.success(request, "Registration successful.")
+            return redirect('base_app:index')
+        else:
+            messages.error(request, "Unsuccessful registration. Invalid information.")
 
-            # login and authenticate user
-            return redirect('login')  # redirect to profile - get name/url of page to redirect to
-
-    else:
-        form = UserCreationForm()
-    return render(request, 'register.html', {'form': form})
-
-
-def logout(request):
-    auth_logout(request)
-    return redirect('login')  # redirect to profile - get name/url of page to redirect to
+    form = RegisterForm()
+    return render(request, 'registration/register.html', context={'form': form})
