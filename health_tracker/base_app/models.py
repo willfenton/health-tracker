@@ -35,7 +35,7 @@ class TrackerUser(User):
         return badges
 
     def get_points(self):
-        user_events = Events.objects.filter()
+        user_events = Events.objects.filter(userId = self.id)
         point_total = 0
         for event in user_events:
             point_total += event.points
