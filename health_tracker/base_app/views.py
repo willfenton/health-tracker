@@ -48,7 +48,7 @@ def register(request):
             user = form.save()
             login(request, user)
             messages.success(request, "Registration successful.")
-            return redirect('profile')
+            return redirect('base_app:profile')
         else:
             messages.error(request, "Unsuccessful registration. Invalid information.")
 
