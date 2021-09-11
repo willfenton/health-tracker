@@ -24,7 +24,7 @@ class TrackerUser(User):
         badges_cutoffs = {
             "gold": 30,
             "silver": 20,
-            "branze": 10
+            "bronze": 10
         }
         keys = badges_cutoffs.keys()
         badges = []
