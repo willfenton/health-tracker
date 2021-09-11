@@ -25,7 +25,7 @@
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link active" href="{% url 'base_app:index' %}">Profile</a>
+                            <a class="nav-link active" href="{% url 'base_app:profile' %}">Profile</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'base_app:logout' %}">Logout</a>
