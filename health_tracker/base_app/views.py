@@ -34,7 +34,7 @@ def profile(request: HttpRequest):
         user = TrackerUser(request.user)
         badges = user.get_badges()
         points = user.get_points()
-        events = Events.objects.filter(userId=user.id)
+        events = Events.objects.filter(userId=user.id).order_by('-activity_date')[:10:1]
         print(badges)
         return render(request, 'profile.html', {'badges': badges, 'points': points, 'events': events})
     else:
@@ -48,7 +48,7 @@ def register(request):
             user = form.save()
             login(request, user)
             messages.success(request, "Registration successful.")
-            return redirect('profile')
+            return redirect('base_app:profileprofile')
         else:
             messages.error(request, "Unsuccessful registration. Invalid information.")
 

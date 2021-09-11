@@ -1,11 +1,11 @@
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
-const activitySelect = document.getElementById('activity')
-const dateSelect = document.getElementById('date')
-const timeSelect = document.getElementById('time')
-
 const resetDateTimeSelects = () => {
+    const activitySelect = document.getElementById('activity')
+    const dateSelect = document.getElementById('date')
+    const timeSelect = document.getElementById('time')
+
     activitySelect.value = "Exercise"
 
     const now = new Date()
@@ -19,6 +19,10 @@ const resetDateTimeSelects = () => {
 const userId = document.getElementById('userId').value
 
 const trackActivity = () => {
+    const activitySelect = document.getElementById('activity')
+    const dateSelect = document.getElementById('date')
+    const timeSelect = document.getElementById('time')
+
     const activity = activitySelect.value
     const date = dateSelect.value
     const time = timeSelect.value
@@ -32,9 +36,34 @@ const trackActivity = () => {
     })
         .then(function (response) {
             console.log(response);
+            updateEvents()
         })
         .catch(function (error) {
             console.log(error);
         });
 }
 
+const updateEvents = () => {
+    axios.get('/events/')
+        .then(function (response) {
+            app.events = response.data
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+}
+
+updateEvents()
+
+const app = new Vue({
+    el: '#app',
+    data: {
+        message: 'Hello Vue!',
+        events: [{
+            "userId": 3,
+            "activity_date": "2021-09-11 14:39",
+            "activity": "Exercised",
+            "points": 50
+        }]
+    }
+})
