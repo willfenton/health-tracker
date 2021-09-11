@@ -1,5 +1,7 @@
 {% extends "nav.html" %}
 
+{% load static %}
+
 {#{% block title %}Custom title{% endblock %}#}
 
 {% block content %}
@@ -11,4 +13,8 @@
             <p>Please login to see this page.</p>
         {% endif %}
     </div>
+{% endblock %}
+
+{% block js %}
+    <script defer src="{% static 'profile.js' %}"></script>
 {% endblock %}
