@@ -1,0 +1,111 @@
+{% extends "nav.html" %}
+
+{% load static %}
+
+{#{% block title %}Custom title{% endblock %}#}
+
+{% block content %}
+    <div class="bg-light p-5 rounded">
+        <h1>{{ user.username }}</h1>
+        <h2>{{ user.email }}</h2>
+        <h3>Points: {{ points }}</h3>
+        <h3>Badges: {{ badges }}</h3>
+        <h3>Streak:</h3>
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Launch demo modal
+        </button>
+
+        <h3>Events:</h3>
+        {% for event in events %}
+            Event: {{ event.activity }} at {{ event.activity_date }} for {{ event.points }} points
+        {% endfor %}
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Record an activity</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="activity" class="form-label">Activity</label>
+                                <select class="form-select" id="activity" required>
+                                    <option>Exercise</option>
+                                    <option>Eat healthy</option>
+                                    <option>Meditate</option>
+                                    <option>Get enough sleep</option>
+                                    <option>Socialize</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="date" class="form-label">Date</label>
+                                <input type="date" id="date" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="time" class="form-label">Time</label>
+                                <input type="time" id="time" required>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="trackActivity()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    {#    <div class="modal modal-signin position-static d-block bg-secondary py-5" tabindex="-1" role="dialog"#}
+    {#         id="modalSignin">#}
+    {#        <div class="modal-dialog" role="document">#}
+    {#            <div class="modal-content rounded-5 shadow">#}
+    {#                <div class="modal-header p-5 pb-4 border-bottom-0">#}
+    {#                    <!-- <h5 class="modal-title">Modal title</h5> -->#}
+    {#                    <h2 class="fw-bold mb-0">Sign up for free</h2>#}
+    {#                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>#}
+    {#                </div>#}
+    {##}
+    {#                <div class="modal-body p-5 pt-0">#}
+    {#                    <form class="">#}
+    {#                        <div class="form-floating mb-3">#}
+    {#                            <input type="email" class="form-control rounded-4" id="floatingInput"#}
+    {#                                   placeholder="name@example.com">#}
+    {#                            <label for="floatingInput">Email address</label>#}
+    {#                        </div>#}
+    {#                        <div class="form-floating mb-3">#}
+    {#                            <input type="password" class="form-control rounded-4" id="floatingPassword"#}
+    {#                                   placeholder="Password">#}
+    {#                            <label for="floatingPassword">Password</label>#}
+    {#                        </div>#}
+    {#                        <button class="w-100 mb-2 btn btn-lg rounded-4 btn-primary" type="submit">Sign up</button>#}
+    {#                        <small class="text-muted">By clicking Sign up, you agree to the terms of use.</small>#}
+    {#                        <hr class="my-4">#}
+    {#                        <h2 class="fs-5 fw-bold mb-3">Or use a third-party</h2>#}
+    {#                        <button class="w-100 py-2 mb-2 btn btn-outline-dark rounded-4" type="submit">#}
+    {#                            Sign up with Twitter#}
+    {#                        </button>#}
+    {#                        <button class="w-100 py-2 mb-2 btn btn-outline-primary rounded-4" type="submit">#}
+    {#                            Sign up with Facebook#}
+    {#                        </button>#}
+    {#                        <button class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-4" type="submit">#}
+    {#                            Sign up with GitHub#}
+    {#                        </button>#}
+    {#                    </form>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
+{% endblock %}
+
+{% block js %}
+    <script defer src="{% static 'profile.js' %}"></script>
+{% endblock %}

@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import login
 from django.shortcuts import render, redirect
+from django.http import HttpRequest
 from rest_framework import viewsets
 
 from .forms import RegisterForm
@@ -28,8 +29,16 @@ class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventsSerializer
 
 
-def index(request):
-    return render(request, 'index.html')
+def profile(request: HttpRequest):
+    if request.user.is_authenticated:
+        user = TrackerUser(request.user)
+        badges = user.get_badges()
+        points = user.get_points()
+        events = Events.objects.filter(userId=user.id)
+        print(badges)
+        return render(request, 'profile.html', {'badges': badges, 'points': points, 'events': events})
+    else:
+        return redirect('base_app:login')
 
 
 def register(request):
@@ -39,7 +48,7 @@ def register(request):
             user = form.save()
             login(request, user)
             messages.success(request, "Registration successful.")
-            return redirect('base_app:index')
+            return redirect('profile')
         else:
             messages.error(request, "Unsuccessful registration. Invalid information.")
 
