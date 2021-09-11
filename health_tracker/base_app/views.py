@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import login
-from django.shortcuts import render, redirect
 from django.http import HttpRequest
+from django.shortcuts import render, redirect
 from rest_framework import viewsets
 
 from .forms import RegisterForm
