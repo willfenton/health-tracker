@@ -1,3 +1,5 @@
+{% load static %}
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -10,6 +12,9 @@
 
     <meta name="description" content="Track your health!">
     <meta name="author" content="Will Fenton, Natalia Hassan, Jacques Leong-Sit, Jun Li, Tristen Glover">
+
+    <!-- https://www.pngfind.com/mpng/TJimwh_health-fitness-icon-healthy-food-icon-png-transparent/ -->
+    <link rel="site icon" type="image/jpg" href="{% static 'icon.png' %}"/>
 
     {% block head %}{% endblock %}
 

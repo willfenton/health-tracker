@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block head %}
     <style>
         html,
@@ -49,7 +51,11 @@
 {% block body %}
     <main class="form-signin text-center">
         <form>
+<<<<<<< Updated upstream
             {# <img class="mb-4" src="../assets/brand/bootstrap-logo.svg" alt="" width="72" height="57"> #}
+=======
+            <img class="mb-4" src="{% static 'icon.png' %}" alt="" width="72" height="72">
+>>>>>>> Stashed changes
             <h1 class="h3 mb-3 fw-normal">Sign in</h1>
 
             <div class="form-floating">
