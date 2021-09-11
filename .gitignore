@@ -3,6 +3,9 @@
 *.iml
 .vscode
 
+# Other
+bootstrap-5.1.1-examples
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
