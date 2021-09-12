@@ -1,3 +1,8 @@
+// Get userId from HTML
+const userId = parseInt(document.getElementById('userId').value)
+const authenticatedUserId = (document.getElementById('authenticatedUserId').value !== 'None') ?
+    parseInt(document.getElementById('authenticatedUserId').value) : -1
+
 const app = new Vue({
     el: '#app',
     data: {
@@ -28,6 +33,8 @@ const app = new Vue({
                 color: '#9f00ff'
             },
         ],
+        userId: userId,
+        authenticatedUserId: authenticatedUserId
     },
 })
 
@@ -71,9 +78,6 @@ const streakChart = new Chart(
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
-// Get userId from HTML
-const userId = parseInt(document.getElementById('userId').value)
-
 const resetDateTimeSelects = () => {
     const dateSelect = document.getElementById('date')
     const timeSelect = document.getElementById('time')
@@ -95,7 +99,7 @@ const trackActivity = () => {
 
     axios.post('/events/', {
         withCredentials: true,
-        'userId': userId,
+        'userId': authenticatedUserId,
         'activity_date': `${date} ${time}`,
         'activity': activity,
         'points': 50
