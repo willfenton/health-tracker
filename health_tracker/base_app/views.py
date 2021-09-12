@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.http import HttpRequest, Http404, HttpResponseNotAllowed, HttpResponse
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from rest_framework import viewsets
 from datetime import datetime
 import json
@@ -69,11 +69,13 @@ def register(request):
 def delete_event(request):
     if request.method == "POST":
         jsonEvent = json.loads(request.body)
-        print(jsonEvent)
         date = datetime.strptime(jsonEvent['activity_date'], '%Y-%m-%dT%H:%M:%S%z')
-        event = get_object_or_404(Events, userId=jsonEvent['userId'], activity=jsonEvent['activity'],
-                                  points=jsonEvent['points'], activity_date=date)
-        event.delete()
-        return HttpResponse('OK')
+        events = Events.objects.filter(userId=jsonEvent['userId'], activity=jsonEvent['activity'],
+                                       points=jsonEvent['points'], activity_date=date)
+        if len(events) == 0:
+            raise Http404()
+        else:
+            events[0].delete()
+            return HttpResponse('OK')
     else:
         return HttpResponseNotAllowed(["POST"])
