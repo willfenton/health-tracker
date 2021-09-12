@@ -40,15 +40,19 @@
                         <th scope="col">Date</th>
                         <th scope="col">Time</th>
                         <th scope="col">Points</th>
+                        <th scope="col" v-if="userId === authenticatedUserId">Delete</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(event, index) in events">
+                    <tr v-for="(eventObj, index) in events">
                         <td>{{ events.length - index }}</td>
-                        <td>{{ event.activity }}</td>
-                        <td>{{ event.date.toString("yyyy-MM-dd") }}</td>
-                        <td>{{ event.date.toString("h:mm tt") }}</td>
-                        <td>{{ event.points }}</td>
+                        <td>{{ eventObj.activity }}</td>
+                        <td>{{ eventObj.date.toString("yyyy-MM-dd") }}</td>
+                        <td>{{ eventObj.date.toString("h:mm tt") }}</td>
+                        <td>{{ eventObj.points }}</td>
+                        <td v-if="userId === authenticatedUserId">
+                            <button class="btn btn-outline-danger" v-on:click="deleteActivity(eventObj)">Delete</button>
+                        </td>
                     </tr>
                     </tbody>
                 </table>

@@ -17,6 +17,7 @@ urlpatterns = [
     path('login', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout', auth_views.LogoutView.as_view(next_page='base_app:login'), name='logout'),
     path('register', views.register, name='register'),
+    path('delete-event', views.delete_event, name='delete_event'),
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
