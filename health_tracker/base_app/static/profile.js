@@ -310,6 +310,26 @@ const resetStreakChart = () => {
     })
 
     streakChart.update()
+
+    const now = Date.now();
+    const one_day = 1 * 24 * 60 * 60 * 1000;
+    const one_day_ago = now - one_day;
+    if (events.length !== 0){
+        let most_recent = events.at(-1)
+        let date_int = new Date(most_recent.activity_date).getTime()
+    
+        if (date_int > one_day_ago) {
+            app.streak = currentStreak
+        } else{
+            app.streak = 0
+        }
+
+    }else{
+        app.streak = 0
+    }
+
+
+
 }
 
 const searchForUser = () => {
@@ -335,5 +355,6 @@ const searchForUser = () => {
     request.send();
 
 }
+
 
 refreshData()
