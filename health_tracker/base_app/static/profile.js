@@ -294,4 +294,28 @@ const resetStreakChart = () => {
     streakChart.update()
 }
 
+const searchForUser = () => {
+    let profile_url = "http://127.0.0.1:8000/profile/";
+    let username = document.getElementById("userSearch").value;
+    let user_url = profile_url.concat("",username);
+    let error_str = "user does not exist."
+    let error_alert = username.concat(" ", error_str)
+
+    var request = new XMLHttpRequest();  
+    request.open('GET', user_url, true);
+    request.onreadystatechange = function(){
+        if (request.readyState === 4){
+            if (request.status === 404) {  
+                
+                window.alert(error_alert);
+            }else{
+                location.href = user_url;
+            }
+
+        }
+    };
+    request.send();
+
+}
+
 refreshData()
