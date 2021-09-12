@@ -1,3 +1,12 @@
+/* global bootstrap: false */
+(function () {
+    'use strict'
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+})()
+
 const app = new Vue({
     el: '#app',
     data: {
@@ -5,7 +14,29 @@ const app = new Vue({
         users: [],
         user: {},
         points: 0,
-        streak: 0
+        streak: 0,
+        activities: [
+            {
+                name: 'Meditate',
+                color: '#a9d1f7'
+            },
+            {
+                name: 'Exercise',
+                color: '#b4f0a7'
+            },
+            {
+                name: 'Socialize',
+                color: '#ffffbf'
+            },
+            {
+                name: 'Get enough sleep',
+                color: '#ffdfbe'
+            },
+            {
+                name: 'Eat healthy',
+                color: '#ffb1b0'
+            },
+        ]
     }
 })
 
@@ -66,11 +97,17 @@ const refreshData = () => {
     // get events
     axios.get('/events/')
         .then((response) => {
+            // get events only for the user
             const eventsForUser = response.data.filter((event) => event.userId === userId)
+
+            // sort by date
             eventsForUser.forEach((event) => event.date = Date.parse(event.activity_date))
             app.events = eventsForUser.sort((a, b) => Date.compare(b.date, a.date))
-            app.events.forEach((event) => event.date = Date.parse(event.activity_date))
+
+            // calculate points
             app.points = app.events.map((event) => event.points).reduce((a, b) => a + b, 0)
+
+
         })
         .catch((error) => {
             console.error(error)
@@ -78,3 +115,4 @@ const refreshData = () => {
 }
 
 refreshData()
+

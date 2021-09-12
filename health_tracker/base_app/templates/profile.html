@@ -6,8 +6,8 @@
     {% csrf_token %}
 
     {% verbatim %}
-    <div id="app">
-        <div class="bg-light p-5 rounded">
+    <div class="bg-light p-5 rounded">
+        <div id="app">
             <h1>{{ user.username }}</h1>
             <h2>{{ user.email }}</h2>
 
@@ -17,7 +17,7 @@
             <ul class="mt-3">
                 <!-- Only show 10 events -->
                 <li v-for="event in events.slice(0, 10)">
-                    {{ event.activity }} {{ event.date.toString("dddd, MMMM dd, yyyy h:mm:ss tt") }} for
+                    {{ event.activity }} {{ event.date.toString("MMMM dd, yyyy h:mm tt") }} for
                     {{ event.points }} points
                 </li>
             </ul>
@@ -44,15 +44,12 @@
                             <div class="mb-3">
                                 <label for="activity" class="form-label">Activity</label>
                                 <select class="form-select" id="activity" required>
-                                    <option>Exercise</option>
-                                    <option>Eat healthy</option>
-                                    <option>Meditate</option>
-                                    <option>Get enough sleep</option>
-                                    <option>Socialize</option>
+                                    <option v-for="activity in activities">{{ activity.name }}</option>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
+                            <div class=" mb-3
+                                    ">
                                 <label for="date" class="form-label">Date</label>
                                 <input type="date" id="date" required>
                             </div>
@@ -75,6 +72,9 @@
         </div>
     </div>
     {% endverbatim %}
+
+    <!-- Kinda janky... this is how we get the userId in the frontend -->
+    <input type="hidden" id="userId" value={{ profile_user.id }}>
 {% endblock %}
 
 {% block js %}

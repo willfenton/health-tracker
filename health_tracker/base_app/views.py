@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import login
-from django.http import HttpRequest
+from django.contrib.auth.models import User
+from django.http import HttpRequest, Http404
 from django.shortcuts import render, redirect
 from rest_framework import viewsets
 
@@ -29,11 +30,23 @@ class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventsSerializer
 
 
-def profile(request: HttpRequest):
+def about(request: HttpRequest):
+    return render(request, 'about.html')
+
+
+def my_profile(request: HttpRequest):
     if request.user.is_authenticated:
-        return render(request, 'profile.html')
+        return redirect('base_app:user_profile', username=request.user.username)
     else:
         return redirect('base_app:login')
+
+
+def user_profile(request: HttpRequest, username):
+    try:
+        user = User.objects.get(username=username)
+        return render(request, 'profile.html', {'profile_user': user})
+    except:
+        raise Http404()
 
 
 def register(request):
@@ -43,7 +56,7 @@ def register(request):
             user = form.save()
             login(request, user)
             messages.success(request, "Registration successful.")
-            return redirect('base_app:profileprofile')
+            return redirect('base_app:my_profile')
         else:
             messages.error(request, "Unsuccessful registration. Invalid information.")
 
