@@ -31,12 +31,7 @@ class EventViewSet(viewsets.ModelViewSet):
 
 def profile(request: HttpRequest):
     if request.user.is_authenticated:
-        user = TrackerUser(request.user)
-        badges = user.get_badges()
-        points = user.get_points()
-        events = Events.objects.filter(userId=user.id).order_by('-activity_date')[:10:1]
-        print(badges)
-        return render(request, 'profile.html', {'badges': badges, 'points': points, 'events': events})
+        return render(request, 'profile.html')
     else:
         return redirect('base_app:login')
 

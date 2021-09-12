@@ -1,22 +1,32 @@
+const app = new Vue({
+    el: '#app',
+    data: {
+        events: [],
+        users: [],
+        user: {},
+        points: 0,
+        streak: 0
+    }
+})
+
+// Needed for axios requests to work
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+
+// Get userId from HTML
+const userId = parseInt(document.getElementById('userId').value)
 
 const resetDateTimeSelects = () => {
     const activitySelect = document.getElementById('activity')
     const dateSelect = document.getElementById('date')
     const timeSelect = document.getElementById('time')
 
-    activitySelect.value = "Exercise"
+    const now = Date.today().setTimeToNow()
 
-    const now = new Date()
-    const date = now.getFullYear() + "-" + ("0" + (now.getMonth() + 1)).slice(-2) + "-" + ("0" + now.getDate()).slice(-2)
-    const time = ("0" + now.getHours()).slice(-2) + ":" + ("0" + now.getMinutes()).slice(-2)
-
-    dateSelect.value = date
-    timeSelect.value = time
+    activitySelect.value = 'Exercise'
+    dateSelect.value = now.toString('yyyy-MM-dd')
+    timeSelect.value = now.toString('HH:mm')
 }
-
-const userId = document.getElementById('userId').value
 
 const trackActivity = () => {
     const activitySelect = document.getElementById('activity')
@@ -34,36 +44,37 @@ const trackActivity = () => {
         'activity': activity,
         'points': 50
     })
-        .then(function (response) {
-            console.log(response);
-            updateEvents()
+        .then((response) => {
+            refreshData()
         })
-        .catch(function (error) {
-            console.log(error);
-        });
+        .catch((error) => {
+            console.error(error)
+        })
 }
 
-const updateEvents = () => {
+const refreshData = () => {
+    // get users
+    axios.get('/users/')
+        .then((response) => {
+            app.users = response.data
+            app.user = response.data.find((user) => user.id === userId)
+        })
+        .catch((error) => {
+            console.error(error)
+        })
+
+    // get events
     axios.get('/events/')
-        .then(function (response) {
-            app.events = response.data
+        .then((response) => {
+            const eventsForUser = response.data.filter((event) => event.userId === userId)
+            eventsForUser.forEach((event) => event.date = Date.parse(event.activity_date))
+            app.events = eventsForUser.sort((a, b) => Date.compare(b.date, a.date))
+            app.events.forEach((event) => event.date = Date.parse(event.activity_date))
+            app.points = app.events.map((event) => event.points).reduce((a, b) => a + b, 0)
         })
-        .catch(function (error) {
-            console.log(error);
-        });
+        .catch((error) => {
+            console.error(error)
+        })
 }
 
-updateEvents()
-
-const app = new Vue({
-    el: '#app',
-    data: {
-        message: 'Hello Vue!',
-        events: [{
-            "userId": 3,
-            "activity_date": "2021-09-11 14:39",
-            "activity": "Exercised",
-            "points": 50
-        }]
-    }
-})
+refreshData()

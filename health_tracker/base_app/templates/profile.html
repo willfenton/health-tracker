@@ -2,86 +2,79 @@
 
 {% load static %}
 
-{#{% block title %}Custom title{% endblock %}#}
-
 {% block content %}
     {% csrf_token %}
+
+    {% verbatim %}
     <div id="app">
         <div class="bg-light p-5 rounded">
-            <div class="row">
-                <div class="column">
-                    <div>
-                        <h1>{{ user.username }}</h1>
-                        <h2>{{ user.email }}</h2>
+            <h1>{{ user.username }}</h1>
+            <h2>{{ user.email }}</h2>
+
+            <h3><b>Points:</b> {{ points }}</h3>
+
+            <h2>Activity</h2>
+            <ul class="mt-3">
+                <!-- Only show 10 events -->
+                <li v-for="event in events.slice(0, 10)">
+                    {{ event.activity }} {{ event.date.toString("dddd, MMMM dd, yyyy h:mm:ss tt") }} for
+                    {{ event.points }} points
+                </li>
+            </ul>
+
+            <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                    onclick="resetDateTimeSelects()">
+                Add Activity
+            </button>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Record an activity</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                     </div>
-                    <h4 class="mt-3"><b>Points:</b> {{ points }}</h4>
-                    <h4><b>Badges:</b> {% for badge in badges %}
-                        {{ badge }}
-                    {% endfor %}</h4>
-                    <h4><b>Streak:</b> 0</h4>
-                </div>
-                <div class="column">
-                    <h2>Activity</h2>
-                    <ul class="mt-3">
-                        {% verbatim %}
-                        <li v-for="event in events">{{ event.activity }} at {{ event.activity_date }} for {{
-                            event.points }} points
-                        </li>
-                        {% endverbatim %}
-                    </ul>
 
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
-                        Add Activity
-                    </button>
-
-                    <!-- Modal -->
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Record an activity</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form>
-                                        <div class="mb-3">
-                                            <label for="activity" class="form-label">Activity</label>
-                                            <select class="form-select" id="activity" required>
-                                                <option>Exercise</option>
-                                                <option>Eat healthy</option>
-                                                <option>Meditate</option>
-                                                <option>Get enough sleep</option>
-                                                <option>Socialize</option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="date" class="form-label">Date</label>
-                                            <input type="date" id="date" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="time" class="form-label">Time</label>
-                                            <input type="time" id="time" required>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
-                                    </button>
-                                    <button type="button" class="btn btn-primary" onclick="trackActivity()">Submit
-                                    </button>
-                                </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="activity" class="form-label">Activity</label>
+                                <select class="form-select" id="activity" required>
+                                    <option>Exercise</option>
+                                    <option>Eat healthy</option>
+                                    <option>Meditate</option>
+                                    <option>Get enough sleep</option>
+                                    <option>Socialize</option>
+                                </select>
                             </div>
-                        </div>
+
+                            <div class="mb-3">
+                                <label for="date" class="form-label">Date</label>
+                                <input type="date" id="date" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="time" class="form-label">Time</label>
+                                <input type="time" id="time" required>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="trackActivity()">Submit
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+    {% endverbatim %}
 {% endblock %}
 
 {% block js %}
