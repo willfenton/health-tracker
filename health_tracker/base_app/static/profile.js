@@ -329,32 +329,33 @@ const loadBadges = () => {
     axios.get('/events/').then((response) => {
         // calculate points 
         app.points = app.events.map((event) => event.points).reduce((a, b) => a + b, 0)
-        if (app.points >= 50){
+        if (app.points >= 50) {
             document.getElementById("badges").appendChild(badge1)
         }
-        if (app.points >= 100){
+        if (app.points >= 100) {
             document.getElementById("badges").appendChild(badge2)
         }
-        if (app.points >= 150){
+        if (app.points >= 150) {
             document.getElementById("badges").appendChild(badge3)
         }
     })
+}
 
 const searchForUser = () => {
     let profile_url = "http://127.0.0.1:8000/profile/";
     let username = document.getElementById("userSearch").value;
-    let user_url = profile_url.concat("",username);
+    let user_url = profile_url.concat("", username);
     let error_str = "user does not exist."
     let error_alert = username.concat(" ", error_str)
 
-    var request = new XMLHttpRequest();  
+    var request = new XMLHttpRequest();
     request.open('GET', user_url, true);
-    request.onreadystatechange = function(){
-        if (request.readyState === 4){
-            if (request.status === 404) {  
-                
+    request.onreadystatechange = function () {
+        if (request.readyState === 4) {
+            if (request.status === 404) {
+
                 window.alert(error_alert);
-            }else{
+            } else {
                 location.href = user_url;
             }
 
