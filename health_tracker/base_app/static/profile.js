@@ -56,6 +56,23 @@ const app = new Vue({
     }
 })
 
+// const deleteActivity = (event) => {
+//     console.log(event)
+//     axios.post('/delete-event', {
+//         withCredentials: true,
+//         'userId': authenticatedUserId,
+//         'activity_date': event.activity_date,
+//         'activity': event.activity,
+//         'points': event.points
+//     })
+//         .then((response) => {
+//             refreshData()
+//         })
+//         .catch((error) => {
+//             console.error(error)
+//         })
+// }
+
 const pointsChart = new Chart(
     document.getElementById('points-canvas'), {
         type: 'line',
