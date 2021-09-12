@@ -26,7 +26,11 @@
             <h3><b>Points:</b> {{ points }}</h3>
             <h3><b>Streak:</b> {{ streak }}</h3>
 
-            <h3 id="badges"><b>Badges:</b></h3>
+            <h3 id="badges"><b>Badges:</b>
+                <img src="../static/bronze.png" width=40 height=40 alt="" v-if="points >= 50">
+                <img src="../static/silver.png" width=40 height=40 alt="" v-if="points >= 100">
+                <img src="../static/gold.png" width=40 height=40 alt="" v-if="points >= 150">
+            </h3>
 
             <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#exampleModal"
                     onclick="resetDateTimeSelects()" v-if="userId === authenticatedUserId">

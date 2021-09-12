@@ -332,7 +332,7 @@ const resetStreakChart = () => {
 
 }
 
-const loadBadges = () => {
+/*const loadBadges = () => {
     var badge1 = document.createElement('img')
     var badge2 = document.createElement('img')
     var badge3 = document.createElement('img')
@@ -359,7 +359,7 @@ const loadBadges = () => {
             document.getElementById("badges").appendChild(badge3)
         }
     })
-}
+}*/
 
 const searchForUser = () => {
     let profile_url = "http://127.0.0.1:8000/profile/";
@@ -387,4 +387,4 @@ const searchForUser = () => {
 
 
 refreshData()
-loadBadges()
+//loadBadges()
