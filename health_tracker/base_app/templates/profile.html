@@ -25,6 +25,8 @@
 
             <h3><b>Points:</b> {{ points }}</h3>
 
+            <h3 id="badges"><b>Badges:</b></h3>
+
             <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#exampleModal"
                     onclick="resetDateTimeSelects()" v-if="userId === authenticatedUserId">
                 Add Activity

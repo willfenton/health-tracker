@@ -312,21 +312,50 @@ const resetStreakChart = () => {
     streakChart.update()
 }
 
+const loadBadges = () => {
+    var badge1 = document.createElement('img')
+    var badge2 = document.createElement('img')
+    var badge3 = document.createElement('img')
+    badge1.src = "../static/bronze.png"
+    badge2.src = "../static/silver.png"
+    badge3.src = "../static/gold.png"
+    badge1.width = 40
+    badge1.height = 40
+    badge2.width = 40
+    badge2.height = 40
+    badge3.width = 40
+    badge3.height = 40
+
+    axios.get('/events/').then((response) => {
+        // calculate points 
+        app.points = app.events.map((event) => event.points).reduce((a, b) => a + b, 0)
+        if (app.points >= 50) {
+            document.getElementById("badges").appendChild(badge1)
+        }
+        if (app.points >= 100) {
+            document.getElementById("badges").appendChild(badge2)
+        }
+        if (app.points >= 150) {
+            document.getElementById("badges").appendChild(badge3)
+        }
+    })
+}
+
 const searchForUser = () => {
     let profile_url = "http://127.0.0.1:8000/profile/";
     let username = document.getElementById("userSearch").value;
-    let user_url = profile_url.concat("",username);
+    let user_url = profile_url.concat("", username);
     let error_str = "user does not exist."
     let error_alert = username.concat(" ", error_str)
 
-    var request = new XMLHttpRequest();  
+    var request = new XMLHttpRequest();
     request.open('GET', user_url, true);
-    request.onreadystatechange = function(){
-        if (request.readyState === 4){
-            if (request.status === 404) {  
-                
+    request.onreadystatechange = function () {
+        if (request.readyState === 4) {
+            if (request.status === 404) {
+
                 window.alert(error_alert);
-            }else{
+            } else {
                 location.href = user_url;
             }
 
@@ -337,3 +366,4 @@ const searchForUser = () => {
 }
 
 refreshData()
+loadBadges()
