@@ -36,6 +36,24 @@ const app = new Vue({
         userId: userId,
         authenticatedUserId: authenticatedUserId
     },
+    methods: {
+        deleteActivity: function (event) {
+            console.log(event)
+            axios.post('/delete-event', {
+                withCredentials: true,
+                'userId': authenticatedUserId,
+                'activity_date': event.activity_date,
+                'activity': event.activity,
+                'points': event.points
+            })
+                .then((response) => {
+                    refreshData()
+                })
+                .catch((error) => {
+                    console.error(error)
+                })
+        }
+    }
 })
 
 const pointsChart = new Chart(
@@ -71,6 +89,29 @@ const streakChart = new Chart(
         data: {
             labels: [],
             datasets: []
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'day'
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        callback: function (value) {
+                            if (value % 1 === 0) {
+                                return value;
+                            }
+                        }
+                    }
+                }]
+            },
+            legend: {
+                display: false
+            }
         }
     })
 
@@ -187,7 +228,7 @@ const resetPointsChart = () => {
                 borderColor: color,
                 fill: false,
                 lineTension: 0,
-                hidden: name !== "Total"
+                hidden: name !== 'Total'
             })
         }
     })
@@ -196,6 +237,78 @@ const resetPointsChart = () => {
 }
 
 const resetStreakChart = () => {
+    streakChart.data.datasets = []
+
+    // sort earliest date to latest
+    const events = app.events.slice().sort((a, b) => Date.compare(a.date, b.date))
+
+    const days = []
+    const dayObjects = []
+
+    events.forEach((event) => {
+        const day = {
+            date: event.date.at("12:00pm"),
+            dayNumber: Math.round(event.date.at("12:00pm").getTime() / 86400000)
+        }
+        if (!days.includes(day.dayNumber)) {
+            days.push(day.dayNumber)
+            dayObjects.push(day)
+        }
+    })
+
+    let chartData = []
+
+    let currentStreak = 0
+    dayObjects.forEach(({date, dayNumber}, index) => {
+        if (index === 0) {
+            currentStreak += 1
+            chartData.push({
+                x: Date.parse(date.toString('yyyy-MM-ddTHH:mm:ss')).addDays(-1).getTime(),
+                y: 0
+            })
+            chartData.push({
+                x: date.getTime(),
+                y: currentStreak
+            })
+        } else {
+            const prevDay = dayObjects[index - 1]
+            if (dayNumber - prevDay.dayNumber === 1) {
+                currentStreak += 1
+                chartData.push({
+                    x: date.getTime(),
+                    y: currentStreak
+                })
+            } else {
+                // flush and reset
+                streakChart.data.datasets.push({
+                    data: chartData,
+                    // label: 'Streak',
+                    borderColor: '#56d837',
+                    fill: false,
+                    lineTension: 0
+                })
+                chartData = []
+                currentStreak = 1
+                chartData.push({
+                    x: Date.parse(date.toString('yyyy-MM-ddTHH:mm:ss')).addDays(-1).getTime(),
+                    y: 0
+                })
+                chartData.push({
+                    x: date.getTime(),
+                    y: currentStreak
+                })
+            }
+        }
+    })
+
+    streakChart.data.datasets.push({
+        data: chartData,
+        // label: 'Streak',
+        borderColor: '#56d837',
+        fill: false,
+        lineTension: 0
+    })
+
     streakChart.update()
 }
 
@@ -226,6 +339,29 @@ const loadBadges = () => {
             document.getElementById("badges").appendChild(badge3)
         }
     })
+
+const searchForUser = () => {
+    let profile_url = "http://127.0.0.1:8000/profile/";
+    let username = document.getElementById("userSearch").value;
+    let user_url = profile_url.concat("",username);
+    let error_str = "user does not exist."
+    let error_alert = username.concat(" ", error_str)
+
+    var request = new XMLHttpRequest();  
+    request.open('GET', user_url, true);
+    request.onreadystatechange = function(){
+        if (request.readyState === 4){
+            if (request.status === 404) {  
+                
+                window.alert(error_alert);
+            }else{
+                location.href = user_url;
+            }
+
+        }
+    };
+    request.send();
+
 }
 
 refreshData()
