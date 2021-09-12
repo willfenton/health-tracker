@@ -1,12 +1,3 @@
-/* global bootstrap: false */
-(function () {
-    'use strict'
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
-        new bootstrap.Tooltip(tooltipTriggerEl)
-    })
-})()
-
 const app = new Vue({
     el: '#app',
     data: {
@@ -18,27 +9,63 @@ const app = new Vue({
         activities: [
             {
                 name: 'Meditate',
-                color: '#a9d1f7'
+                color: '#00aaee'
             },
             {
                 name: 'Exercise',
-                color: '#b4f0a7'
+                color: '#f70d1a'
             },
             {
                 name: 'Socialize',
-                color: '#ffffbf'
+                color: '#ffe302'
             },
             {
                 name: 'Get enough sleep',
-                color: '#ffdfbe'
+                color: '#ff5f00'
             },
             {
                 name: 'Eat healthy',
-                color: '#ffb1b0'
+                color: '#9f00ff'
             },
-        ]
-    }
+        ],
+    },
 })
+
+const pointsChart = new Chart(
+    document.getElementById('points-canvas'), {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: []
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'day'
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            legend: {
+                display: true
+            }
+        }
+    })
+
+const streakChart = new Chart(
+    document.getElementById('streak-canvas'), {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: []
+        }
+    })
 
 // Needed for axios requests to work
 axios.defaults.xsrfCookieName = 'csrftoken'
@@ -48,13 +75,11 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 const userId = parseInt(document.getElementById('userId').value)
 
 const resetDateTimeSelects = () => {
-    const activitySelect = document.getElementById('activity')
     const dateSelect = document.getElementById('date')
     const timeSelect = document.getElementById('time')
 
     const now = Date.today().setTimeToNow()
 
-    activitySelect.value = 'Exercise'
     dateSelect.value = now.toString('yyyy-MM-dd')
     timeSelect.value = now.toString('HH:mm')
 }
@@ -97,22 +122,77 @@ const refreshData = () => {
     // get events
     axios.get('/events/')
         .then((response) => {
+            const now = new Date().setTimeToNow()
+
             // get events only for the user
-            const eventsForUser = response.data.filter((event) => event.userId === userId)
+            let eventsForUser = response.data.filter((event) => event.userId === userId);
 
             // sort by date
             eventsForUser.forEach((event) => event.date = Date.parse(event.activity_date))
+
+            // filter out future events
+            eventsForUser = eventsForUser.filter((event) => now.getTime() - event.date.getTime() > 0)
+
             app.events = eventsForUser.sort((a, b) => Date.compare(b.date, a.date))
 
             // calculate points
             app.points = app.events.map((event) => event.points).reduce((a, b) => a + b, 0)
 
-
+            resetPointsChart()
+            resetStreakChart()
         })
         .catch((error) => {
             console.error(error)
         })
 }
 
-refreshData()
+const resetPointsChart = () => {
+    const datasets = app.activities.slice().concat({
+        name: 'Total',
+        color: '#56d837'
+    })
 
+    // sort earliest date to latest
+    const events = app.events.slice().sort((a, b) => Date.compare(a.date, b.date))
+
+    pointsChart.data.datasets = []
+
+    datasets.forEach(({color, name}) => {
+        const chartData = []
+
+        let pointTotal = 0
+        events.forEach((event) => {
+            if (event.activity === name || name === "Total") {
+                pointTotal += event.points
+                chartData.push({
+                    x: event.date.getTime(),
+                    y: pointTotal
+                })
+            }
+        })
+
+        if (chartData.length > 0) {
+            // chartData.push({
+            //     x: new Date().setTimeToNow().getTime(),
+            //     y: pointTotal
+            // })
+
+            pointsChart.data.datasets.push({
+                data: chartData,
+                label: name,
+                borderColor: color,
+                fill: false,
+                lineTension: 0,
+                hidden: name !== "Total"
+            })
+        }
+    })
+
+    pointsChart.update()
+}
+
+const resetStreakChart = () => {
+    streakChart.update()
+}
+
+refreshData()
